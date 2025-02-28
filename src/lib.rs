@@ -32,9 +32,10 @@ pub struct Contract {
 #[public]
 impl Contract {
     /// List all stored repositories.
-    pub fn list_all(&self) -> Vec<(Address, String, String, String, Vec<Address>)> {
+    pub fn list_all(&self) -> (Vec<Address>, Vec<(String, String, String, Vec<Address>)>) {
         let own_len = self.owners.len();
-        let mut result = Vec::with_capacity(own_len);
+        let mut gf_vec = Vec::with_capacity(own_len);
+        let mut own_vec = Vec::with_capacity(own_len);
         for i in 0..own_len {
             let owner = self.owners.get(i).unwrap();
             let repos = self.map.get(owner);
@@ -47,8 +48,8 @@ impl Contract {
                 for j in 0..col_len {
                     colaborators.push(repo.colaborators.get(j).unwrap());
                 }
-                result.push((
-                    owner,
+                own_vec.push(owner);
+                gf_vec.push((
                     repo.name.get_string(),
                     repo.description.get_string(),
                     repo.hash.get_string(),
@@ -57,7 +58,7 @@ impl Contract {
             }
         }
 
-        result
+        (own_vec, gf_vec)
     }
 
     /// Add a new repository.
